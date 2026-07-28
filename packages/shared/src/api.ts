@@ -1,8 +1,28 @@
 // The single source of truth for the HTTP contract between web and server.
 
-export type Difficulty = 'junior' | 'mid' | 'senior';
-export type InterviewStatus = 'in_progress' | 'completed';
-export type Verdict = 'strong_hire' | 'hire' | 'borderline' | 'no_hire';
+export const Difficulty = {
+    Junior: 'junior',
+    Mid: 'mid',
+    Senior: 'senior',
+} as const;
+
+export type Difficulty = (typeof Difficulty)[keyof typeof Difficulty];
+
+export const InterviewStatus = {
+    InProgress: 'in_progress',
+    Completed: 'completed',
+} as const;
+
+export type InterviewStatus = (typeof InterviewStatus)[keyof typeof InterviewStatus];
+
+export const Verdict = {
+    StrongHire: 'strong_hire',
+    Hire: 'hire',
+    Borderline: 'borderline',
+    NoHire: 'no_hire',
+} as const;
+
+export type Verdict = (typeof Verdict)[keyof typeof Verdict];
 
 export interface PersonaDto {
     id: string;
