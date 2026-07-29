@@ -42,6 +42,20 @@ export class InterviewSession {
         return this._turns.filter((turn) => turn.isAnswered).length;
     }
 
+    get averageScore(): number {
+        const scores = this._turns
+            .map((turn) => turn.evaluation?.score)
+            .filter((score): score is number => score !== undefined);
+
+        if (scores.length === 0) {
+            return 0;
+        }
+
+        const total = scores.reduce((sum, score) => sum + score, 0);
+
+        return Math.round((total / scores.length) * 10) / 10;
+    }
+
     get isAwaitingQuestion(): boolean {
         return this._status === InterviewStatus.InProgress && this.currentTurn === null;
     }

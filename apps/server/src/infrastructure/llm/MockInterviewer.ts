@@ -1,14 +1,13 @@
 import type { GeneratedQuestion, InterviewerGateway } from '../../domain/interview/ports.js';
+import { verdictForScore } from '../../domain/interview/scoring.js';
 import type { InterviewSession } from '../../domain/interview/InterviewSession.js';
 import type { InterviewTurn } from '../../domain/interview/InterviewTurn.js';
 import type { Evaluation } from '../../domain/interview/Evaluation.js';
 import type { InterviewReport } from '../../domain/interview/InterviewReport.js';
-import { Verdict } from '@interviewer/shared';
 
 const PIRATE_PERSONA_ID = 'pirate';
 const THINKING_DELAY_MS = 400;
 
-// The heuristic never awards a perfect score: 10/10 should mean a real evaluator was impressed
 const MAX_MOCK_SCORE = 9;
 
 interface QuestionTemplate {
@@ -86,12 +85,11 @@ export class MockInterviewer implements InterviewerGateway {
     async writeReport(session: InterviewSession): Promise<InterviewReport> {
         await this.pause();
 
-        const scores = session.turns.map((turn) => turn.evaluation?.score ?? 0);
-        const overallScore = scores.length === 0 ? 0 : average(scores);
+        const overallScore = session.averageScore;
 
         return {
             overallScore,
-            verdict: toVerdict(overallScore),
+            verdict: verdictForScore(overallScore),
             summary:
                 `Across ${session.turns.length} questions for the ${session.config.role} role, ` +
                 `the candidate averaged ${overallScore.toFixed(1)}/10. ` +
@@ -110,26 +108,4 @@ function countWords(text: string): number {
     const trimmed = text.trim();
 
     return trimmed === '' ? 0 : trimmed.split(/\s+/).length;
-}
-
-function average(scores: number[]): number {
-    const total = scores.reduce((sum, score) => sum + score, 0);
-
-    return Math.round((total / scores.length) * 10) / 10;
-}
-
-function toVerdict(overallScore: number): Verdict {
-    if (overallScore >= 8.5) {
-        return Verdict.StrongHire;
-    }
-
-    if (overallScore >= 6.5) {
-        return Verdict.Hire;
-    }
-
-    if (overallScore >= 4.5) {
-        return Verdict.Borderline;
-    }
-
-    return Verdict.NoHire;
 }
