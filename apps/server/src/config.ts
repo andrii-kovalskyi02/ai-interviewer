@@ -11,7 +11,7 @@ const EnvSchema = z.object({
     PORT: z.coerce.number().int().positive().default(3001),
     LLM_PROVIDER: z.enum([LlmProvider.Mock, LlmProvider.Ollama]).default(LlmProvider.Mock),
     OLLAMA_BASE_URL: z.url().default('http://localhost:11434'),
-    OLLAMA_MODEL: z.string().min(1).default('llama3.2'),
+    OLLAMA_MODEL: z.string().min(1).default('llama3.2:3b'),
 });
 
 export type LlmConfig =
