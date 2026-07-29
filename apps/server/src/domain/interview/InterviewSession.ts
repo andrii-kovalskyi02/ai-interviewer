@@ -4,6 +4,7 @@ import type { Evaluation } from './Evaluation.js';
 import type { InterviewConfig } from './InterviewConfig.js';
 import type { InterviewReport } from './InterviewReport.js';
 import { InterviewTurn } from './InterviewTurn.js';
+import { InterviewMessages } from './messages.js';
 import type { Question } from './Question.js';
 
 export class InterviewSession {
@@ -49,14 +50,12 @@ export class InterviewSession {
         this.assertInProgress();
 
         if (this.currentTurn !== null) {
-            throw new InvalidStateError(
-                'the current question must be answered before asking the next one',
-            );
+            throw new InvalidStateError(InterviewMessages.questionStillPending);
         }
 
         if (this._turns.length >= this.config.questionCount) {
             throw new InvalidStateError(
-                `interview already has all ${this.config.questionCount} questions`,
+                InterviewMessages.allQuestionsAsked(this.config.questionCount),
             );
         }
 
@@ -72,7 +71,7 @@ export class InterviewSession {
         const turn = this.currentTurn;
 
         if (turn === null) {
-            throw new InvalidStateError('there is no pending question to answer');
+            throw new InvalidStateError(InterviewMessages.noPendingQuestion);
         }
 
         turn.answerWith(text);
@@ -82,7 +81,7 @@ export class InterviewSession {
 
     attachEvaluation(turn: InterviewTurn, evaluation: Evaluation): void {
         if (!this._turns.includes(turn)) {
-            throw new InvalidStateError('turn does not belong to this interview');
+            throw new InvalidStateError(InterviewMessages.foreignTurn);
         }
 
         turn.evaluateWith(evaluation);
@@ -93,14 +92,12 @@ export class InterviewSession {
 
         if (this._turns.length < this.config.questionCount) {
             throw new InvalidStateError(
-                `interview needs ${this.config.questionCount} questions before it can be completed`,
+                InterviewMessages.notEnoughQuestions(this.config.questionCount),
             );
         }
 
         if (!this._turns.every((turn) => turn.isAnswered && turn.isEvaluated)) {
-            throw new InvalidStateError(
-                'every question must be answered and evaluated before completing',
-            );
+            throw new InvalidStateError(InterviewMessages.unevaluatedAnswers);
         }
 
         this._status = InterviewStatus.Completed;
@@ -109,7 +106,7 @@ export class InterviewSession {
 
     private assertInProgress(): void {
         if (this._status !== InterviewStatus.InProgress) {
-            throw new InvalidStateError('the interview is already completed');
+            throw new InvalidStateError(InterviewMessages.alreadyCompleted);
         }
     }
 }

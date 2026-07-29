@@ -2,6 +2,7 @@ import { InvalidStateError } from '../errors.js';
 import type { Answer } from './Answer.js';
 import type { Evaluation } from './Evaluation.js';
 import type { Question } from './Question.js';
+import { InterviewMessages } from './messages.js';
 
 export class InterviewTurn {
     private _answer: Answer | null = null;
@@ -27,9 +28,7 @@ export class InterviewTurn {
 
     answerWith(text: string): void {
         if (this._answer !== null) {
-            throw new InvalidStateError(
-                `question ${this.question.index} has already been answered`,
-            );
+            throw new InvalidStateError(InterviewMessages.alreadyAnswered(this.question.index));
         }
 
         this._answer = { text, answeredAt: new Date() };
@@ -37,15 +36,11 @@ export class InterviewTurn {
 
     evaluateWith(evaluation: Evaluation): void {
         if (this._answer === null) {
-            throw new InvalidStateError(
-                `question ${this.question.index} cannot be evaluated before it is answered`,
-            );
+            throw new InvalidStateError(InterviewMessages.notAnsweredYet(this.question.index));
         }
 
         if (this._evaluation !== null) {
-            throw new InvalidStateError(
-                `question ${this.question.index} has already been evaluated`,
-            );
+            throw new InvalidStateError(InterviewMessages.alreadyEvaluated(this.question.index));
         }
 
         this._evaluation = evaluation;

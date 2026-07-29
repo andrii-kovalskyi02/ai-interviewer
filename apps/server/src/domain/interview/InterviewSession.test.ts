@@ -6,6 +6,7 @@ import { InterviewConfig } from './InterviewConfig.js';
 import type { InterviewReport } from './InterviewReport.js';
 import { InterviewSession } from './InterviewSession.js';
 import { PERSONAS } from './Persona.js';
+import { InterviewMessages } from './messages.js';
 
 const EVALUATION: Evaluation = {
     score: 7,
@@ -74,15 +75,20 @@ describe('InterviewSession', () => {
 
     it('rejects an answer when no question is pending', () => {
         const session = createSession();
+        const answerTooEarly = () => session.submitAnswer('too early');
 
-        expect(() => session.submitAnswer('too early')).toThrow(InvalidStateError);
+        expect(answerTooEarly).toThrow(InvalidStateError);
+        expect(answerTooEarly).toThrow(InterviewMessages.noPendingQuestion);
     });
 
     it('rejects a new question while the current one is unanswered', () => {
         const session = createSession();
         session.askQuestion('First question?', 'typescript');
 
-        expect(() => session.askQuestion('Second question?', 'node')).toThrow(InvalidStateError);
+        const askAgain = () => session.askQuestion('Second question?', 'node');
+
+        expect(askAgain).toThrow(InvalidStateError);
+        expect(askAgain).toThrow(InterviewMessages.questionStillPending);
     });
 
     it('rejects more questions than the configured count', () => {
@@ -93,7 +99,10 @@ describe('InterviewSession', () => {
             answerAndEvaluate(session);
         }
 
-        expect(() => session.askQuestion('One too many?', 'typescript')).toThrow(InvalidStateError);
+        const askExtra = () => session.askQuestion('One too many?', 'typescript');
+
+        expect(askExtra).toThrow(InvalidStateError);
+        expect(askExtra).toThrow(InterviewMessages.allQuestionsAsked(3));
     });
 
     it('rejects an evaluation for a turn from another interview', () => {
@@ -104,7 +113,10 @@ describe('InterviewSession', () => {
         otherSession.askQuestion('Theirs?', 'typescript');
         const foreignTurn = otherSession.submitAnswer('an answer');
 
-        expect(() => session.attachEvaluation(foreignTurn, EVALUATION)).toThrow(InvalidStateError);
+        const attachForeign = () => session.attachEvaluation(foreignTurn, EVALUATION);
+
+        expect(attachForeign).toThrow(InvalidStateError);
+        expect(attachForeign).toThrow(InterviewMessages.foreignTurn);
     });
 
     it('refuses to complete before every question has been asked', () => {
@@ -112,7 +124,10 @@ describe('InterviewSession', () => {
         session.askQuestion('Only question?', 'typescript');
         answerAndEvaluate(session);
 
-        expect(() => session.complete(REPORT)).toThrow(InvalidStateError);
+        const completeEarly = () => session.complete(REPORT);
+
+        expect(completeEarly).toThrow(InvalidStateError);
+        expect(completeEarly).toThrow(InterviewMessages.notEnoughQuestions(3));
     });
 
     it('refuses to complete while an answer is still unevaluated', () => {
@@ -125,7 +140,10 @@ describe('InterviewSession', () => {
         session.askQuestion('Third?', 'testing');
         session.submitAnswer('unevaluated answer');
 
-        expect(() => session.complete(REPORT)).toThrow(InvalidStateError);
+        const completeUnevaluated = () => session.complete(REPORT);
+
+        expect(completeUnevaluated).toThrow(InvalidStateError);
+        expect(completeUnevaluated).toThrow(InterviewMessages.unevaluatedAnswers);
     });
 
     it('completes once every question is answered and evaluated', () => {
@@ -152,10 +170,10 @@ describe('InterviewSession', () => {
 
         session.complete(REPORT);
 
-        expect(() => session.askQuestion('After the end?', 'typescript')).toThrow(
-            InvalidStateError,
-        );
-        expect(() => session.submitAnswer('after the end')).toThrow(InvalidStateError);
-        expect(() => session.complete(REPORT)).toThrow(InvalidStateError);
+        const alreadyCompleted = InterviewMessages.alreadyCompleted;
+
+        expect(() => session.askQuestion('After the end?', 'typescript')).toThrow(alreadyCompleted);
+        expect(() => session.submitAnswer('after the end')).toThrow(alreadyCompleted);
+        expect(() => session.complete(REPORT)).toThrow(alreadyCompleted);
     });
 });
