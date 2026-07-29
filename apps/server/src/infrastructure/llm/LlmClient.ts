@@ -1,3 +1,5 @@
+import { ErrorCode } from '@interviewer/shared';
+
 export interface ChatMessage {
     readonly role: 'system' | 'user' | 'assistant';
     readonly content: string;
@@ -13,6 +15,8 @@ export interface LlmClient {
 }
 
 export class LlmUnavailableError extends Error {
+    readonly code = ErrorCode.LlmUnavailable;
+
     constructor(message: string) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
