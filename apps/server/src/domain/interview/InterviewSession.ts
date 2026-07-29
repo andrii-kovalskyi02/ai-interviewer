@@ -50,14 +50,12 @@ export class InterviewSession {
 
         if (this.currentTurn !== null) {
             throw new InvalidStateError(
-                'invalid_state',
                 'the current question must be answered before asking the next one',
             );
         }
 
         if (this._turns.length >= this.config.questionCount) {
             throw new InvalidStateError(
-                'invalid_state',
                 `interview already has all ${this.config.questionCount} questions`,
             );
         }
@@ -74,7 +72,7 @@ export class InterviewSession {
         const turn = this.currentTurn;
 
         if (turn === null) {
-            throw new InvalidStateError('invalid_state', 'there is no pending question to answer');
+            throw new InvalidStateError('there is no pending question to answer');
         }
 
         turn.answerWith(text);
@@ -84,7 +82,7 @@ export class InterviewSession {
 
     attachEvaluation(turn: InterviewTurn, evaluation: Evaluation): void {
         if (!this._turns.includes(turn)) {
-            throw new InvalidStateError('invalid_state', 'turn does not belong to this interview');
+            throw new InvalidStateError('turn does not belong to this interview');
         }
 
         turn.evaluateWith(evaluation);
@@ -95,14 +93,12 @@ export class InterviewSession {
 
         if (this._turns.length < this.config.questionCount) {
             throw new InvalidStateError(
-                'invalid_state',
                 `interview needs ${this.config.questionCount} questions before it can be completed`,
             );
         }
 
         if (!this._turns.every((turn) => turn.isAnswered && turn.isEvaluated)) {
             throw new InvalidStateError(
-                'invalid_state',
                 'every question must be answered and evaluated before completing',
             );
         }
@@ -113,7 +109,7 @@ export class InterviewSession {
 
     private assertInProgress(): void {
         if (this._status !== InterviewStatus.InProgress) {
-            throw new InvalidStateError('invalid_state', 'the interview is already completed');
+            throw new InvalidStateError('the interview is already completed');
         }
     }
 }

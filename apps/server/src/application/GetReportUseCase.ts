@@ -17,10 +17,7 @@ export class GetReportUseCase {
         const report = session.report;
 
         if (report === null) {
-            throw new InvalidStateError(
-                'invalid_state',
-                `interview ${interviewId} has not been completed yet`,
-            );
+            throw new InvalidStateError(`interview ${interviewId} has not been completed yet`);
         }
 
         return { session, report };

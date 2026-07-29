@@ -1,6 +1,8 @@
+import { ErrorCode } from '@interviewer/shared';
+
 export class DomainError extends Error {
     constructor(
-        readonly code: string,
+        readonly code: ErrorCode,
         message: string,
     ) {
         super(message);
@@ -8,5 +10,14 @@ export class DomainError extends Error {
     }
 }
 
-export class NotFoundError extends DomainError {}
-export class InvalidStateError extends DomainError {}
+export class NotFoundError extends DomainError {
+    constructor(message: string) {
+        super(ErrorCode.NotFound, message);
+    }
+}
+
+export class InvalidStateError extends DomainError {
+    constructor(message: string) {
+        super(ErrorCode.InvalidState, message);
+    }
+}

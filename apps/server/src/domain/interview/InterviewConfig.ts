@@ -1,4 +1,4 @@
-import type { Difficulty } from '@interviewer/shared';
+import { type Difficulty, ErrorCode } from '@interviewer/shared';
 import type { Persona } from './Persona.js';
 import { DomainError } from '../errors.js';
 
@@ -21,7 +21,10 @@ export class InterviewConfig {
         const role = props.role.trim();
 
         if (role.length < 3 || role.length > 80) {
-            throw new DomainError('invalid_config', 'role must be between 3 and 80 characters');
+            throw new DomainError(
+                ErrorCode.InvalidConfig,
+                'role must be between 3 and 80 characters',
+            );
         }
 
         if (
@@ -30,7 +33,7 @@ export class InterviewConfig {
             props.questionCount > 8
         ) {
             throw new DomainError(
-                'invalid_config',
+                ErrorCode.InvalidConfig,
                 'questionCount must be an integer between 3 and 8',
             );
         }

@@ -87,6 +87,17 @@ export interface ReportDto {
     turns: ReportTurnDto[];
 }
 
+export const ErrorCode = {
+    NotFound: 'not_found',
+    InvalidState: 'invalid_state',
+    InvalidConfig: 'invalid_config',
+    ValidationFailed: 'validation_failed',
+    LlmUnavailable: 'llm_unavailable',
+    InternalError: 'internal_error',
+} as const;
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
+
 export interface ApiError {
-    error: { code: string; message: string };
+    error: { code: ErrorCode; message: string };
 }

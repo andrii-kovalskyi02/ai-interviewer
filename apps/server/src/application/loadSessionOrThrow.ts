@@ -9,7 +9,7 @@ export async function loadSessionOrThrow(
     const session = await repository.findById(interviewId);
 
     if (session === null) {
-        throw new NotFoundError('not_found', `interview ${interviewId} was not found`);
+        throw new NotFoundError(`interview ${interviewId} was not found`);
     }
 
     return session;

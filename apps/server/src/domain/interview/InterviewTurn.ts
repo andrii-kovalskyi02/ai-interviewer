@@ -28,7 +28,6 @@ export class InterviewTurn {
     answerWith(text: string): void {
         if (this._answer !== null) {
             throw new InvalidStateError(
-                'invalid_state',
                 `question ${this.question.index} has already been answered`,
             );
         }
@@ -39,14 +38,12 @@ export class InterviewTurn {
     evaluateWith(evaluation: Evaluation): void {
         if (this._answer === null) {
             throw new InvalidStateError(
-                'invalid_state',
                 `question ${this.question.index} cannot be evaluated before it is answered`,
             );
         }
 
         if (this._evaluation !== null) {
             throw new InvalidStateError(
-                'invalid_state',
                 `question ${this.question.index} has already been evaluated`,
             );
         }

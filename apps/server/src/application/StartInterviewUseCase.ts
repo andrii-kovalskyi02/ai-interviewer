@@ -23,7 +23,7 @@ export class StartInterviewUseCase {
         const persona = findPersona(input.personaId);
 
         if (persona === undefined) {
-            throw new NotFoundError('not_found', `unknown persona: ${input.personaId}`);
+            throw new NotFoundError(`unknown persona: ${input.personaId}`);
         }
 
         const config = InterviewConfig.create({
