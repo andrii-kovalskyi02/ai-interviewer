@@ -12,6 +12,7 @@ defineEmits<{ (e: 'select', id: string): void }>();
         class="card"
         :class="{ selected: props.selected }"
         :aria-pressed="props.selected"
+        :aria-label="`${props.persona.name}: ${props.persona.tagline}`"
         @click="$emit('select', props.persona.id)"
     >
         <span class="avatar" aria-hidden="true">{{ props.persona.emoji }}</span>
