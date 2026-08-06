@@ -26,7 +26,7 @@ export class Persona {
     }
 }
 
-export const PERSONAS: readonly Persona[] = [
+export const PERSONAS: readonly Persona[] = [   
     Persona.create({
         id: 'mentor',
         name: 'The Supportive Mentor',

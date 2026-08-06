@@ -48,7 +48,7 @@ describe('interview use cases', () => {
     it('rejects an unknown persona before any interview is created', async () => {
         const { start, repository } = wire();
 
-        expect(start.execute(startInput('nope'))).rejects.toThrow(NotFoundError);
+        await expect(start.execute(startInput('nope'))).rejects.toThrow(NotFoundError);
         await expect(repository.findById('any')).resolves.toBeNull();
     });
 
@@ -91,7 +91,7 @@ describe('interview use cases', () => {
     it('rejects an answer to an unknown interview', async () => {
         const { submitAnswer } = wire();
 
-        expect(
+         await expect(
             submitAnswer.execute({ interviewId: 'does-not-exist', text: ANSWER }),
         ).rejects.toThrow(NotFoundError);
     });
@@ -105,7 +105,7 @@ describe('interview use cases', () => {
             await submitAnswer.execute({ interviewId: started.id, text: ANSWER });
         }
 
-        expect(
+        await expect(
             submitAnswer.execute({ interviewId: started.id, text: ANSWER }),
         ).rejects.toThrow(InterviewMessages.alreadyCompleted);
     });
@@ -115,6 +115,6 @@ describe('interview use cases', () => {
 
         const started = await start.execute(startInput());
 
-        expect(getReport.execute(started.id)).rejects.toThrow(InvalidStateError);
+        await expect(getReport.execute(started.id)).rejects.toThrow(InvalidStateError);
     });
 });
